@@ -1,0 +1,269 @@
+<head>
+  <title>myTopo</title>
+  <script type="text/javascript"
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB2V8IFYwB-Syx2-lauWq8EgjNmS7b8fMY">
+  </script>
+  <meta name="viewport" content="width=device-width, user-scalable=no">
+</head>
+<template name="headertitle">
+<div id="headertitle" class="h1 title">myTopo</div>
+</template>
+<template name="defaultHeader">
+	<div class="bar bar-header bar-stable">
+<div id="headertitle" class="h1 title">myTopo</div>
+	</div>
+</template>
+<template name="topodetailheader">
+	<div class="bar bar-header bar-stable">
+	<button id="backtofavbutton" class="button button-icon icon ion-reply"></button>
+	<div id="headertitle" class="h1 title">myTopo</div>
+{{#if currentUser}}
+	<button id="addtofavbutton" class="button button-icon icon ion-star pull-right"></button>
+{{/if}}
+	</div>
+</template>
+<template name="edittopoheader">
+	<div class="bar bar-header bar-stable">
+<div id="headertitle" class="h1 title">myTopo</div>
+	<button id="editTopoDoneButton" class="button button-icon icon ion-checkmark pull-right"></button>
+	</div>
+</template>
+<template name="editImageheader">
+		<!--<button id="photo-link" class="button button-block button-positive">Post Photo</button>-->
+	<div class="bar bar-header bar-stable">
+	<button id="replyStrokeButton" class="button button-icon icon ion-reply"></button>
+<div id="headertitle" class="h1 title">myTopo</div>
+	<button id="drawDoneButton" class="button button-icon icon ion-checkmark pull-right"></button>
+	</div>
+</template>
+<template name="searchheader">
+<div class="bar bar-header item-input-inset">
+  <label class="item-input-wrapper">
+    <i class="icon ion-ios-search placeholder-icon"></i>
+    <input type="search" placeholder="Search">
+  </label>
+  <button class="button button-clear">
+    Cancel
+  </button>
+</div>
+</template>
+<template name="topocanvas">
+<div id="myDiv"></div>
+</template>
+<template name="topo">
+{{>dynamicTopoTemplate}}
+</template>
+<template name="topodetail">
+{{#with topo}}
+<div class="list card">
+  <div class="item item-avatar">
+	<img src="{{thumb}}" />
+	
+    <h2>{{name}} ({{difficulty.difficultyscalename}} {{difficulty.difficultyvalue}})</h2>
+    <a href="/map/{{_id}}" ><p>GPS: {{gps.lat}} {{gps.lng}}</p></a>
+  </div>
+  <div class="item item-body">
+{{#if topo}}
+  {{>topocanvas}}
+{{/if}}
+  <p>user: {{username}}</p>
+  <p>
+	{{description}}
+    </p>
+	</div>
+</div>
+
+	{{#if currentUser}}
+	<div class="list">
+		<div class="item item-button-right">
+	    	leave a comment:
+	    	<button id="postcommentbutton" class="button button-positive" >
+				<i class="icon ion-paper-airplane"></i>
+	    	</button>
+		</div>
+		<div calss="item">
+			<label class="item item-input">
+		    	<textarea id="currrentcomment" placeholder="comment"></textarea>
+		  	</label>
+		</div>
+	</div>
+	{{else}}
+		{{> loginButtons}}
+	{{/if}}
+	<div class="item item-divider">
+    Comments
+	</div>
+	<ul class="list">
+	{{#each comments}}
+    <li class="item">
+		<h3>{{username}}</h3>
+		<p>{{comment}}</p>
+    </li>
+	{{else}}
+	<li class="item">
+     	<p>be the first to comment...</p>
+	</li>
+	{{/each}}
+	</ul>
+{{/with}}  
+</template>
+<template name="topodifficulty">
+<div class="range">
+	  <i class="icon ion-minus-circled"></i>
+	  <input id="difficultyslider" type="range" value="0" name="mDifficulty" >
+	  <i class="icon ion-plus-circled"></i>
+	 </div>
+</template>
+<template name="topoeditform">
+<div id="topoDataRow" class="row row-center" >
+	<div class="col col-center" >
+	<form id="topoform">
+	<h2>topo information</h2>
+	<div class="list list-inset">
+	  <label class="item item-input item-stacked-label">
+		<span class="input-label">name of route</span>
+		<input name="mName" type="text" placeholder="in case you're the first on this spot, be creative!">
+	  </label>
+	   <label class="item item-input item-stacked-label">
+		<span class="input-label">description of route</span>
+		<textarea name="mDescription" placeholder="good to know!"></textarea>
+	  </label>
+	<li class="item item-toggle">
+	Boulder?
+	<label class="toggle">
+	   <input id="isbouldercheckbox" name="mIsBoulder" type="checkbox" >
+	   <div class="track">
+		 <div class="handle"></div>
+	   </div>
+	</label>
+	</li>	
+	<h3>{{#with difficulty}}{{difficultyscalename}} {{difficultyvalue}}{{/with}}</h3>
+	{{>topodifficulty}}
+	<h1></h1>
+	<h1></h1>
+	<button id="saveTopoButton" class="button button-full button-balanced">save and publish topo</button>
+	</div>
+	</form>
+</div>
+</div>
+</template>
+<template name="topodraw">
+<div class="row row-center" >
+	<div class="col col-center" >
+		<div id="canvas">
+		</div>
+	</div>
+</div>
+</template>
+<template name="topoimage">
+<div class="row row-center" >
+	<div class="col col-center" >
+	{{#if currentUser}}
+		<button id="takePictureButton" class="button button-block button-positive icon ion-camera"></button>
+	{{else}}
+	<h2>Please sign-in with facebook or create a mytopo-account.</h2>
+	<p>To create and publish topos or save your own topos, please sign-in</p>
+	<div class="row row-center" >
+		<div class="col col-center" >
+			{{> loginButtons}}
+		</div>
+	</div>
+	{{/if}}
+	</div>
+</div>
+</template>
+<template name="map">
+  <div class="google-map">
+    {{> googleMap
+      geolocate=true
+      markers=markers
+      selectedMarkerId=selectedMarkerId}}
+  </div>
+</template>
+<template name="topofavorites">
+{{#each favorites}}
+	<a href="/topodetail/{{_id}}" >
+		<div class="list card">      
+			<div class="item item-thumbnail-left">
+				<img src="{{thumb}}" />
+				<h2>{{name}} {{#if difficulty}}({{difficulty.difficultyscalename}} {{difficulty.difficultyvalue}}){{/if}}</h2>
+				<h3><a href="/map/{{_id}}" >{{gps.lat}} {{gps.lng}}</a></h3>
+				<p>{{description}}</p>
+			</div>
+		</div>
+	</a>
+{{else}}
+	<div class="list card">
+		<h3>you have no favorites yet.</h3>
+	</div>
+{{/each}}
+</template>
+<template name="ownTopos">
+	{{#each topos}}
+			<div class="list card">      
+		 <a href="/topodetail/{{_id}}" >
+				<div class="item item-thumbnail-left">
+					<img src="{{thumb}}" />
+					<h2>{{name}} {{#if difficulty}}({{difficulty.difficultyscalename}} {{difficulty.difficultyvalue}}){{/if}}</h2>
+					<h3><a href="/map/{{_id}}" >{{gps.lat}} {{gps.lng}}</a></h3>
+					<p>{{description}}</p>
+				</div>
+	    	</a>
+			<div class="item item-button-right assertive">
+					<button id="deletetopobutton" class="button button-assertive">
+						<i class="icon ion-trash-a"></i>
+					</button>
+			</div>
+			</div>
+			{{else}}
+			<div class="list card">
+				<h3>you have not created any topos yet.</h3>
+			</div>
+		{{/each}}
+
+</template>
+<template name="fav">
+	{{#if currentUser}}
+		<div class="item item-divider">
+	    Your favorite topos:
+		</div>
+		{{>topofavorites}}
+		<div class="item item-divider">
+	    Your own topos:
+		</div>
+		{{>ownTopos}}
+	{{else}}
+		<h2>Please sign-in with facebook or create a mytopo-account.</h2>
+		<p>to see your own routes or your favorites of others, please sign-in</p>
+		<div class="row row-center" >
+			<div class="col col-center" >
+				{{> loginButtons}}
+			</div>
+		</div>
+	{{/if}}
+</template>
+<template name="layout">
+  <div class="bar bar-header bar-stable">
+	{{>dynamicHeader}}
+  </div>
+  <div id="content" class="content">
+    {{> yield}}
+  </div>
+  <div class="tabs tabs-icon-top" id="myTabs">
+    <a class="tab-item active {{#if onPage 'map'}} positive {{/if}} {{#if onPage 'mapWithPhoto'}} positive {{/if}}" href="/">
+      <i class="icon ion-map"></i>
+      map
+    </a>
+	<a class="tab-item active {{#if onPage 'topo'}}positive{{/if}}" href="/topo">
+      <i class="icon ion-image"></i>
+      topo
+    </a>
+    <a class="tab-item active {{#if onPage 'fav'}}positive{{/if}}" href="/fav">
+      <i class="icon ion-star"></i>
+      fav
+    </a>
+  </div>
+    <div style="width: 0; height: 0; overflow: hidden;">
+		<input id="PhotoPicker" type="file" accept="image/*;capture=camera">
+	</div>	
+</template>

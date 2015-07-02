@@ -1,0 +1,22 @@
+# Meteor packages used by this project, one per line.
+# Check this file (and the other files in this directory) into your repository.
+#
+# 'meteor add' and 'meteor remove' will edit this file for you,
+# but you can also edit it by hand.
+
+meteor-platform
+insecure
+d3
+google-maps
+ionic
+mdg:camera
+mdg:geolocation
+mdg:reload-on-resume
+mrt:moment
+accounts-ui
+accounts-facebook
+iron:router
+jquery
+standard-app-packages
+accounts-password
+service-configuration
